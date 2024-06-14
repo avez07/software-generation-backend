@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const moment = require('moment')
 
-const compareForm = new mongoose.Schema({
+const uspAndfetures = new mongoose.Schema({
   fullName: {
     type: String,
     required: true
@@ -39,18 +39,9 @@ const compareForm = new mongoose.Schema({
   employeeStrength: {
     type: String,
     required: true
-  },
-  campanyName: {
-    type: String,
-    required: true
-  },
-  challenges: {
-    type: String,
-    required: true
-  },
-  
+  },  
  
 }, { timestamps: true });
 
-const Campare = mongoose.model('compareForm', compareForm, 'compareForm');
-module.exports = Campare;
+const uspAndFetuers = mongoose.model('usp-fetures', uspAndfetures, 'usp-fetures');
+module.exports = uspAndFetuers;

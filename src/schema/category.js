@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const moment = require('moment')
 
-const compareForm = new mongoose.Schema({
+const Category = new mongoose.Schema({
   fullName: {
     type: String,
     required: true
@@ -32,25 +32,14 @@ const compareForm = new mongoose.Schema({
     type: String,
     required: true
   },
-  softwareName: {
-    type: String,
-    required: true
-  },
   employeeStrength: {
     type: String,
     required: true
-  },
-  campanyName: {
-    type: String,
-    required: true
-  },
-  challenges: {
-    type: String,
-    required: true
-  },
+  }
+
   
  
 }, { timestamps: true });
 
-const Campare = mongoose.model('compareForm', compareForm, 'compareForm');
-module.exports = Campare;
+const softCategory = mongoose.model('softCategory', Category, 'softCategory');
+module.exports = softCategory;
