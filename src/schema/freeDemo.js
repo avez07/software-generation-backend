@@ -48,7 +48,7 @@ const freeDemoModel = new mongoose.Schema({
           // Allowing the schema to handle various date formats
           return moment(value, 'YYYY-MM-DD', true).isValid();
         },
-        message: props => `${props.value} is not a valid date. Expected format: DD-MM-YYYY`
+        message: props => `${props.value} is not a valid date. Expected format: YYYY-MM-DD`
       }
   }
  
