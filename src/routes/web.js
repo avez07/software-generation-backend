@@ -21,6 +21,7 @@ router.route('/freeDemo').get(RetiveController.freeDemoCate)
 router.route('/softlist').get(RetiveController.softwareListed)
 router.route('/uspsFetures').get(RetiveController.uspAndFetuer)
 router.route('/softpricing').get(RetiveController.getpricing)
+router.route('/categorySoft').get(RetiveController.CategorySotware)
 
 
 

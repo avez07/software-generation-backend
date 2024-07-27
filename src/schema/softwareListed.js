@@ -34,7 +34,11 @@ const SoftwareListedModel = new mongoose.Schema({
     websiteLink: {
         type: String,
         required: true
-    }
+    },
+    employeeStrength: {
+        type: String,
+        required: true
+      }
 }, { timestamps: true })
 
 const SofwareListed = mongoose.model('softwareListed', SoftwareListedModel, 'softwareListed')

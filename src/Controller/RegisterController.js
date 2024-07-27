@@ -26,13 +26,14 @@ const UserRegistration = asyncErrorHandller(async(req,res,next)=>{
    res.status(200).json({status:200,message:'success'});
 })
 const softwareListed = asyncErrorHandller(async(req,res,next)=>{
-    const {fullName,phoneNo,email,websiteLink,companyName} = req.body
+    const {fullName,phoneNo,email,websiteLink,companyName,employeeStrength} = req.body
     const software = new SofwareListed({
      fullName:fullName,
      phoneNo:phoneNo,
      email:email,
      companyName:companyName,
-     websiteLink:websiteLink
+     websiteLink:websiteLink,
+     employeeStrength:employeeStrength
     })
     await software.save();
     res.status(200).json({status:200,message:'success'});
