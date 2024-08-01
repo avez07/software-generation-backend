@@ -32,10 +32,7 @@ const compareForm = new mongoose.Schema({
     type: String,
     required: true
   },
-  softwareName: {
-    type: String,
-    required: true
-  },
+ 
   employeeStrength: {
     type: String,
     required: true
