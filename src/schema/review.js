@@ -46,6 +46,10 @@ const UserReviewModel = new mongoose.Schema({
     type: Number,
     required: true
   },
+  Customization  : {
+    type: Number,
+    required: true
+  },
    CustomerSupport: {
     type: Number,
     required: true
