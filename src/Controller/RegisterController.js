@@ -2,6 +2,7 @@ const Campare = require('../schema/camparissionForm')
 const softCategory = require('../schema/category')
 const freeDemo = require('../schema/freeDemo')
 const GetPricing = require('../schema/pricing')
+const UserReview = require('../schema/review')
 const SofwareListed = require('../schema/softwareListed')
 const trendSoftrware = require('../schema/trendinSoftDemo')
 const UserAuth = require('../schema/userAuth')
@@ -122,4 +123,23 @@ const uspAndfetures = asyncErrorHandller(async(req,res,next)=>{
    await response.save();
    res.status(200).json({status:200,message:'success'});
 })
-module.exports = {UserRegistration,softwareListed,trendingSoftdemo,freeDemosoft,getPricing,campareForm,softwareCategory,uspAndfetures}
+const review = asyncErrorHandller(async(req,res,next)=>{
+    const {fullName,email,JobTittle,SoftwareUsage,SoftwareName,UIUX,FeatuersFunc,Performance,ValueForMoney,CustomerSupport,Integration,ReportingAnalytics} = req.body
+    const response = new UserReview({
+        fullName: fullName,
+        email: email,
+        JobTittle: JobTittle,
+        SoftwareUsage: SoftwareUsage,
+        SoftwareName: SoftwareName,
+        UIUX: UIUX,
+        FeatuersFunc: FeatuersFunc,
+        Performance: Performance,
+        ValueForMoney: ValueForMoney,
+        CustomerSupport: CustomerSupport,
+        Integration: Integration,
+        ReportingAnalytics:ReportingAnalytics
+    })
+       await response.save();
+       res.status(200).json({status:200,message:'success'});
+})
+module.exports = {UserRegistration,softwareListed,trendingSoftdemo,freeDemosoft,getPricing,campareForm,softwareCategory,uspAndfetures,review}

@@ -13,6 +13,8 @@ router.route('/softpricing').post(RegisterController.getPricing)
 router.route('/campare').post(RegisterController.campareForm)
 router.route('/softCategory').post(RegisterController.softwareCategory)
 router.route('/uspsFetures').post(RegisterController.uspAndfetures)
+router.route('/review').post(RegisterController.review)
+
 
 router.route('/getUser/:flag').get(RetiveController.userAuth)
 router.route('/trendingsoft').get(RetiveController.trendingSoftrware)
@@ -21,6 +23,8 @@ router.route('/freeDemo').get(RetiveController.freeDemoCate)
 router.route('/softlist').get(RetiveController.softwareListed)
 router.route('/uspsFetures').get(RetiveController.uspAndFetuer)
 router.route('/softpricing').get(RetiveController.getpricing)
+router.route('/review').get(RetiveController.review)
+
 
 
 

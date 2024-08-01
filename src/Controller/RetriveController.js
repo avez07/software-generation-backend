@@ -2,6 +2,7 @@ const Campare = require('../schema/camparissionForm')
 const softCategory = require('../schema/category')
 const freeDemo = require('../schema/freeDemo')
 const GetPricing = require('../schema/pricing')
+const UserReview = require('../schema/review')
 const SofwareListed = require('../schema/softwareListed')
 const trendSoftrware = require('../schema/trendinSoftDemo')
 const UserAuth = require('../schema/userAuth')
@@ -92,6 +93,16 @@ const getpricing = asyncErrorHandller(async (req, res, next) => {
     })
     res.status(200).json({ message: 'success', status: 200, data: response })
 })
+const review = asyncErrorHandller(async (req, res, next) => {
+    const response = await UserReview.find({}).select('-_id -__v').lean()
+    response.map((items) => {
+        items.createdAt = UtctoLocalString(items.createdAt, 'YYYY-MM-DD HH:mm:ss')
+        items.updatedAt = UtctoLocalString(items.updatedAt, 'YYYY-MM-DD HH:mm:ss')
+
+        return items
+    })
+    res.status(200).json({ message: 'success', status: 200, data: response })
+})
 
 
-module.exports = { userAuth, trendingSoftrware, campareSoft, freeDemoCate, CategorySotware,softwareListed ,uspAndFetuer,getpricing}
+module.exports = { userAuth, trendingSoftrware, campareSoft, freeDemoCate, CategorySotware,softwareListed ,uspAndFetuer,getpricing,review}
