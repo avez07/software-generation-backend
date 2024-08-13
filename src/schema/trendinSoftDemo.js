@@ -39,11 +39,8 @@ const trendingSoftewareDemo = new mongoose.Schema({
   employeeStrength: {
     type: String,
     required: true
-  },
-  preferedDemoDate: {
-    type: String,
-    required: true,
   }
+  
  
 }, { timestamps: true });
 

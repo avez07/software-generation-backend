@@ -41,7 +41,7 @@ const softwareListed = asyncErrorHandller(async(req,res,next)=>{
 })
 
 const trendingSoftdemo = asyncErrorHandller(async(req,res,next)=>{
-    const {fullName,phoneNo,email,softwareCategory,softwareName,employeeStrength,preferedDemoDate} = req.body
+    const {fullName,phoneNo,email,softwareCategory,softwareName,employeeStrength} = req.body
    const trendDemo = new trendSoftrware({
     fullName:fullName,
     phoneNo:phoneNo,
@@ -49,7 +49,7 @@ const trendingSoftdemo = asyncErrorHandller(async(req,res,next)=>{
     softwareCategory:softwareCategory,
     softwareName :softwareName,
     employeeStrength:employeeStrength,
-    preferedDemoDate: preferedDemoDate,
+    // preferedDemoDate: preferedDemoDate,
    })
    await trendDemo.save();
    res.status(200).json({status:200,message:'success'});
