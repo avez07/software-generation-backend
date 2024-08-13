@@ -125,7 +125,7 @@ const uspAndfetures = asyncErrorHandller(async(req,res,next)=>{
    res.status(200).json({status:200,message:'success'});
 })
 const review = asyncErrorHandller(async(req,res,next)=>{
-    const {fullName,email,JobTittle,SoftwareUsage,SoftwareName,UIUX,FeatuersFunc,Performance,Customization,ValueForMoney,CustomerSupport,Integration,ReportingAnalytics} = req.body
+    const {fullName,email,message,JobTittle,SoftwareUsage,SoftwareName,UIUX,FeatuersFunc,Performance,Customization,ValueForMoney,CustomerSupport,Integration,ReportingAnalytics} = req.body
     const response = new UserReview({
         fullName: fullName,
         email: email,
@@ -133,6 +133,7 @@ const review = asyncErrorHandller(async(req,res,next)=>{
         SoftwareUsage: SoftwareUsage,
         SoftwareName: SoftwareName,
         UIUX: UIUX,
+        message : message,
         FeatuersFunc: FeatuersFunc,
         Performance: Performance,
         ValueForMoney: ValueForMoney,

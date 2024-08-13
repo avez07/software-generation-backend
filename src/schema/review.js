@@ -17,6 +17,10 @@ const UserReviewModel = new mongoose.Schema({
       message: props => `${props.value} is not a valid email address`
     }
   },
+  message :{
+    type:String,
+    required : true
+  },
   JobTittle :{
     type:String,
     required : true
