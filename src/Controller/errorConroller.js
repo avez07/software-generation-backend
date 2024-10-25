@@ -52,7 +52,7 @@ const proderror = (req,res, err) => {
             message: err.message,
         })
     } else {
-        fs.appendFileSync(`../log-data/error-${UtctoLocalString(new Date(Date.now()),'YY-MM-DD')}.log`, errorLog(req,res,err));
+        fs.appendFileSync(`./src/log-data/error-${UtctoLocalString(new Date(Date.now()),'YY-MM-DD')}.log`, errorLog(req,res,err));
         res.status(500).json({
             status: 500,
             message: 'Something Went Wrong Try Again !',

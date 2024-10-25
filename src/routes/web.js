@@ -2,6 +2,7 @@ const express = require('express');
 const errorConroller = require('../Controller/errorConroller');
 const RegisterController = require('../Controller/RegisterController');
 const RetiveController = require('../Controller/RetriveController');
+const DynamicController = require('../Controller/DynamicPagesController')
 
 const router = express.Router()
 
@@ -26,6 +27,8 @@ router.route('/softpricing').get(RetiveController.getpricing)
 router.route('/categorySoft').get(RetiveController.CategorySotware)
 router.route('/review').get(RetiveController.review)
 
+//dynamic routing 
+router.route('/AddCategory').post(DynamicController.AddCategory)
 
 
 
