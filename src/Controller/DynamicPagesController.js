@@ -16,4 +16,14 @@ const AddCategory = asyncErrorHandller(async(req,res,next)=>{
     const Data = await SoftwareCategory.findOneAndUpdate(filter,update,{upsert:true,returnOriginal:false})
     res.status(200).json({status:200,message:'success',documentId: Data?._id,})
 })
-module.exports = {AddCategory}
+const FetchCategory = asyncErrorHandller(async(req,res,next)=>{
+
+   const Data = await SoftwareCategory.find({}).lean()
+   const MappingData = Data.map((item) => {
+    item.BuyerGuide = he.decode(item.BuyerGuide);
+    item.Discription = he.decode(item.Discription);
+    return item;
+});
+  res.status(200).json({status:200,message:'success',data: Data,})
+})
+module.exports = {AddCategory,FetchCategory}
