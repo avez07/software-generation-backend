@@ -20,10 +20,11 @@ const FetchCategory = asyncErrorHandller(async(req,res,next)=>{
 
    const Data = await SoftwareCategory.find({}).lean()
    const MappingData = Data.map((item) => {
+    
     item.BuyerGuide = he.decode(item.BuyerGuide);
     item.Discription = he.decode(item.Discription);
-    return item;
+    return{ ...item};
 });
-  res.status(200).json({status:200,message:'success',data: Data,})
+  res.status(200).json({status:200,message:'success',data: MappingData,})
 })
 module.exports = {AddCategory,FetchCategory}

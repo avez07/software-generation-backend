@@ -27,7 +27,7 @@ const SoftCAtegorySechma = new mongoose.Schema({
         }],
         default:[]
     }
-})
+},{versionKey:false})
 SoftCAtegorySechma.index({slug:1})
 SoftCAtegorySechma.index({CategoryName:1});
 
