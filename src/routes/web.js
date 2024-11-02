@@ -31,6 +31,8 @@ router.route('/review').get(RetiveController.review)
 router.route('/AddCategory').post(DynamicController.AddCategory)
 router.route('/FetchAllCategory').get(DynamicController.FetchCategory)
 router.route('/AddSoftware').post(DynamicController.AddSoftware)
+router.route('/FetchAllSoftware').get(DynamicController.FetchCategory)
+
 
 
 
