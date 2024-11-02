@@ -1,0 +1,65 @@
+
+    Remote ADD: Thursday, October 31st 2024, 6:06:32 pm
+    URL : http://localhost:5000/api/AddCategory
+    RequestBody : {"SlugName":"","SoftwareName":"","discription":""}
+    Authorization : undefine
+    Response : TypeError: Cannot read properties of undefined (reading 'replace')
+    at Object.encode (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\he\he.js:202:20)
+    at C:\Users\ansar\Desktop\projects\software-generation-backend\src\Controller\DynamicPagesController.js:15:122
+    at C:\Users\ansar\Desktop\projects\software-generation-backend\src\utils\asyncErrorHandller.js:4:9
+    at Layer.handle [as handle_request] (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\index.js:280:10)
+    
+    Remote ADD: Thursday, October 31st 2024, 6:13:11 pm
+    URL : http://localhost:5000/api/AddCategory
+    RequestBody : {"SlugName":"","SoftwareName":"","discription":""}
+    Authorization : undefine
+    Response : TypeError: Cannot read properties of undefined (reading 'replace')
+    at Object.encode (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\he\he.js:202:20)
+    at C:\Users\ansar\Desktop\projects\software-generation-backend\src\Controller\DynamicPagesController.js:15:122
+    at C:\Users\ansar\Desktop\projects\software-generation-backend\src\utils\asyncErrorHandller.js:4:9
+    at Layer.handle [as handle_request] (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\index.js:280:10)
+    
+    Remote ADD: Thursday, October 31st 2024, 6:18:09 pm
+    URL : http://localhost:5000/api/AddCategory
+    RequestBody : {"SlugName":"","SoftwareName":"","discription":""}
+    Authorization : undefine
+    Response : TypeError: Cannot read properties of undefined (reading 'replace')
+    at Object.encode (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\he\he.js:202:20)
+    at C:\Users\ansar\Desktop\projects\software-generation-backend\src\Controller\DynamicPagesController.js:15:122
+    at C:\Users\ansar\Desktop\projects\software-generation-backend\src\utils\asyncErrorHandller.js:4:9
+    at Layer.handle [as handle_request] (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\index.js:280:10)
+    
+    Remote ADD: Thursday, October 31st 2024, 6:32:06 pm
+    URL : http://localhost:5000/api/AddCategory
+    RequestBody : {"SlugName":"","SoftwareName":"","discription":""}
+    Authorization : undefine
+    Response : TypeError: Cannot read properties of undefined (reading 'replace')
+    at Object.encode (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\he\he.js:202:20)
+    at C:\Users\ansar\Desktop\projects\software-generation-backend\src\Controller\DynamicPagesController.js:15:122
+    at C:\Users\ansar\Desktop\projects\software-generation-backend\src\utils\asyncErrorHandller.js:4:9
+    at Layer.handle [as handle_request] (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\ansar\Desktop\projects\software-generation-backend\node_modules\express\lib\router\index.js:280:10)
+    
