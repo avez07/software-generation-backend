@@ -1,5 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const path = require('path')
 const router = require('./routes/web');
 const cors = require('cors');
 const connection = require('./config/config');
@@ -15,6 +16,8 @@ process.on('uncaughtException',(err)=>{
 app.use(cors());
 app.use(express.json())
 app.use('/api',router)
+app.use('/live',express.static('./public/uploads'));
+
  const server = app.listen(5000,()=>{
     console.log('app is running on the port 5000')
 })

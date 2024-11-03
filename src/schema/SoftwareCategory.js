@@ -20,13 +20,14 @@ const SoftCAtegorySechma = new mongoose.Schema({
     BuyerGuide:{
         type: String
     },
-    TableCaparison: {
-        type: [{
+    TableCaparison: [
+        {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Softwares'
-        }],
-        default:[]
-    }
+            ref: 'Softwares' // Ensure this matches the model name exactly
+        }
+    ],
+        
+    
 },{versionKey:false})
 SoftCAtegorySechma.index({slug:1})
 SoftCAtegorySechma.index({CategoryName:1});

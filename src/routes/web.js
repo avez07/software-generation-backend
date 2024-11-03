@@ -3,6 +3,8 @@ const errorConroller = require('../Controller/errorConroller');
 const RegisterController = require('../Controller/RegisterController');
 const RetiveController = require('../Controller/RetriveController');
 const DynamicController = require('../Controller/DynamicPagesController')
+const {upload} = require('../Controller/DynamicPagesController')
+
 
 const router = express.Router()
 
@@ -29,9 +31,13 @@ router.route('/review').get(RetiveController.review)
 
 //dynamic routing 
 router.route('/AddCategory').post(DynamicController.AddCategory)
+router.route('/UpdateCategory').post(DynamicController.UpdateCategory)
 router.route('/FetchAllCategory').get(DynamicController.FetchCategory)
-router.route('/AddSoftware').post(DynamicController.AddSoftware)
-router.route('/FetchAllSoftware').get(DynamicController.FetchCategory)
+router.route('/AddSoftware').post(upload.single('image'),DynamicController.AddSoftware)
+router.route('/UpdateSoftware').post(upload.single('image'),DynamicController.UpdateSoftware)
+router.route('/FetchAllSoftware/:id').get(DynamicController.FetchSofteares)
+router.route('/CountSoftware').get(DynamicController.CountSoftwares)
+
 
 
 
