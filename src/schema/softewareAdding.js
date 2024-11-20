@@ -33,6 +33,14 @@ const SoftAddingSechma = new mongoose.Schema({
         type:Array,
         require:true,
     },
+    specification:{
+         type:String,
+        default:''
+    },
+    graphScore:{
+        type:Array,
+        default:[]
+    },
     UspData:{
         type:[{
             tittle:{type:String,default:''},

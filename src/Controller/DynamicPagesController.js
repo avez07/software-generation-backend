@@ -55,7 +55,8 @@ const UpdateCategoryStatus = asyncErrorHandller(async (req, res, next) => {
 })
 
 const AddSoftware = asyncErrorHandller(async (req, res, nex) => {
-  const { CategoryId, SoftwareName, SubTittle, discription, SoftWareQA, KeyFeatures, TableContent, UspData } = JSON.parse(req.body.data)
+  const { CategoryId, SoftwareName, SubTittle, discription,graphScore, SoftWareQA, KeyFeatures, TableContent, UspData } = JSON.parse(req.body.data)
+  // return console.log(req.files)
   const encodedUspData = UspData.map(item => ({
     ...item,
     content: he.encode(item.content)
@@ -65,11 +66,13 @@ const AddSoftware = asyncErrorHandller(async (req, res, nex) => {
     $set: {
       CategordId: CategoryId,
       SoftwareName: SoftwareName,
-      Image: req.file.filename,
+      Image: req.files?.image[0].filename || null,
       SubTittle: SubTittle,
       discription: he.encode(discription),
       SoftWareQA: he.encode(SoftWareQA),
+      specification: req.files?.specification[0].filename || null,
       KeyFeatures: KeyFeatures.map((items) => items.value),
+      graphScore:graphScore,
       TableContent: TableContent.map((items) => items.value),
       UspData: encodedUspData
     }
@@ -127,7 +130,9 @@ const UpdateSoftware = asyncErrorHandller(async (req, res, next) => {
       KeyFeatures: KeyFeatures.map((items) => items.value),
       TableContent: TableContent.map((items) => items.value),
       UspData: encodedUspData,
-      ...(req.file && { Image: req.file.filename })
+      ...(req.files?.specification && { specification: req.files.specification[0].filename }),
+      ...(req.files?.image && { Image: req.files.image[0].filename })
+
     }
   }
   const Data = await softewareAdding.findByIdAndUpdate(id, update)
