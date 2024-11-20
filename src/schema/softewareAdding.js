@@ -29,12 +29,20 @@ const SoftAddingSechma = new mongoose.Schema({
         type:Array,
         require:true,
     },
+    TableContent:{
+        type:Array,
+        require:true,
+    },
     UspData:{
         type:[{
             tittle:{type:String,default:''},
             content:{type:String,default:''},
 
         }]
+    },
+    Active:{
+        type:Boolean,
+        default:true
     }
 },{versionKey:false})
 

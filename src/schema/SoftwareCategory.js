@@ -26,6 +26,10 @@ const SoftCAtegorySechma = new mongoose.Schema({
             ref: 'Softwares' // Ensure this matches the model name exactly
         }
     ],
+    Active:{
+        type:Boolean,
+        default:false
+    }
         
     
 },{versionKey:false})

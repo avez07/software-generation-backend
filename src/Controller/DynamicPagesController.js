@@ -9,10 +9,10 @@ const softewareAdding = require('../schema/softewareAdding');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-      cb(null, 'public/uploads/'); // Directory to save uploaded files
+    cb(null, 'public/uploads/'); // Directory to save uploaded files
   },
   filename: (req, file, cb) => {
-      cb(null, Date.now() + '-' + file.originalname); // Set a unique filename
+    cb(null, Date.now() + '-' + file.originalname); // Set a unique filename
   },
 });
 const upload = multer({ storage: storage });
@@ -29,14 +29,14 @@ const AddCategory = asyncErrorHandller(async (req, res, next) => {
 })
 const UpdateCategory = asyncErrorHandller(async (req, res, next) => {
   const { id, SlugName, CategoryName, discription, BuyersGuide, Camparision } = req.body
- if(!id) throw new CustomError('Id is Missing',404)
+  if (!id) throw new CustomError('Id is Missing', 404)
   const update = { $set: { slug: SlugName, CategoryName: CategoryName, Discription: he.encode(discription), BuyerGuide: he.encode(BuyersGuide), TableCaparison: Camparision } };
   const Data = await SoftwareCategory.findByIdAndUpdate(id, update)
   res.status(200).json({ status: 200, message: 'success', documentId: Data?._id, })
 })
 const FetchCategory = asyncErrorHandller(async (req, res, next) => {
 
-  const Data = await SoftwareCategory.find({}).populate('TableCaparison','SoftwareName').lean()
+  const Data = await SoftwareCategory.find({}).populate('TableCaparison', 'SoftwareName').lean()
   const MappingData = Data.map((item) => {
 
     item.BuyerGuide = he.decode(item.BuyerGuide);
@@ -45,30 +45,42 @@ const FetchCategory = asyncErrorHandller(async (req, res, next) => {
   });
   res.status(200).json({ status: 200, message: 'success', data: MappingData, })
 })
-const AddSoftware = asyncErrorHandller(async(req,res,nex)=>{
-const {CategoryId,SoftwareName,SubTittle,discription,SoftWareQA,KeyFeatures,UspData} = JSON.parse(req.body.data)
-const encodedUspData = UspData.map(item => ({
-  ...item,
-  content: he.encode(item.content)
-}));
-const filter = {SoftwareName:SoftwareName}
-const update = {$set:{
-  CategordId:CategoryId,
-  SoftwareName:SoftwareName,
-  Image:req.file.filename,
-  SubTittle:SubTittle,
-  discription:he.encode(discription),
-  SoftWareQA:he.encode(SoftWareQA),
-  KeyFeatures:KeyFeatures,
-  UspData:encodedUspData
-}}
-const response = await softewareAdding.findOneAndUpdate(filter,update,{upsert:true,returnOriginal:false})
-res.status(200).json({ status: 200, message: 'success', documentId: response?._id, })
+
+const UpdateCategoryStatus = asyncErrorHandller(async (req, res, next) => {
+  const { id } = req.query
+  if (!id) throw CustomError('Id is INvalid', 404)
+  const Update = await SoftwareCategory.findByIdAndUpdate(id, [{ $set: { Active: { $not: '$Active' } } }], { new: true })
+  res.status(200).json({ status: 200, message: 'success', data: Update })
+
+})
+
+const AddSoftware = asyncErrorHandller(async (req, res, nex) => {
+  const { CategoryId, SoftwareName, SubTittle, discription, SoftWareQA, KeyFeatures, TableContent, UspData } = JSON.parse(req.body.data)
+  const encodedUspData = UspData.map(item => ({
+    ...item,
+    content: he.encode(item.content)
+  }));
+  const filter = { SoftwareName: SoftwareName }
+  const update = {
+    $set: {
+      CategordId: CategoryId,
+      SoftwareName: SoftwareName,
+      Image: req.file.filename,
+      SubTittle: SubTittle,
+      discription: he.encode(discription),
+      SoftWareQA: he.encode(SoftWareQA),
+      KeyFeatures: KeyFeatures.map((items) => items.value),
+      TableContent: TableContent.map((items) => items.value),
+      UspData: encodedUspData
+    }
+  }
+  const response = await softewareAdding.findOneAndUpdate(filter, update, { upsert: true, returnOriginal: false })
+  res.status(200).json({ status: 200, message: 'success', documentId: response?._id, })
 })
 const FetchSofteares = asyncErrorHandller(async (req, res, next) => {
-const {id} = req.params
+  const { id } = req.params
 
-  const Data = await softewareAdding.find({CategordId:id}).lean()
+  const Data = await softewareAdding.find({ CategordId: id ,Active:true}).lean()
   const MappingData = Data.map((item) => {
     const encodedUspData = item.UspData.map(items => ({
       ...items,
@@ -82,37 +94,52 @@ const {id} = req.params
   });
   res.status(200).json({ status: 200, message: 'success', data: MappingData, })
 })
-const CountSoftwares = asyncErrorHandller(async(req,res,next)=>{
-const response = await softewareAdding.aggregate([
-  {
-    $group:{
-      _id:'$CategordId',
-      count:{$count:{}}
+const CountSoftwares = asyncErrorHandller(async (req, res, next) => {
+  const response = await softewareAdding.aggregate([
+    {
+      $match:{Active:true}
+    },
+    {
+      $group: {
+        _id: '$CategordId',
+        count: { $count: {} }
+      }
     }
-  }
-])
-res.status(200).json({status:200,message:'success',data:response})
+  ])
+  res.status(200).json({ status: 200, message: 'success', data: response })
 })
 
 const UpdateSoftware = asyncErrorHandller(async (req, res, next) => {
-  const {id,CategoryId,SoftwareName,SubTittle,discription,SoftWareQA,KeyFeatures,UspData} = JSON.parse(req.body.data)
+  const { id, CategoryId, SoftwareName, SubTittle, discription, SoftWareQA, KeyFeatures, TableContent, UspData } = JSON.parse(req.body.data)
 
- if(!id) throw new CustomError('Id is Missing',404)
+  if (!id) throw new CustomError('Id is Missing', 404)
   const encodedUspData = UspData.map(item => ({
     ...item,
     content: he.encode(item.content)
   }));
-  const update = {$set:{
-    CategordId:CategoryId,
-    SoftwareName:SoftwareName,
-    SubTittle:SubTittle,
-    discription:he.encode(discription),
-    SoftWareQA:he.encode(SoftWareQA),
-    KeyFeatures:KeyFeatures,
-    UspData:encodedUspData,
-    ...(req.file && { Image: req.file.filename })
-  }}
+  const update = {
+    $set: {
+      CategordId: CategoryId,
+      SoftwareName: SoftwareName,
+      SubTittle: SubTittle,
+      discription: he.encode(discription),
+      SoftWareQA: he.encode(SoftWareQA),
+      KeyFeatures: KeyFeatures.map((items) => items.value),
+      TableContent: TableContent.map((items) => items.value),
+      UspData: encodedUspData,
+      ...(req.file && { Image: req.file.filename })
+    }
+  }
   const Data = await softewareAdding.findByIdAndUpdate(id, update)
   res.status(200).json({ status: 200, message: 'success', documentId: Data?._id, })
 })
-module.exports = { AddCategory, FetchCategory ,AddSoftware,FetchSofteares,CountSoftwares,UpdateCategory,upload,UpdateSoftware}
+const DeleteSoftware = asyncErrorHandller(async (req, res, next) => {
+  const { id } = req.query
+  if (!id) throw CustomError('Id is Invalid', 404)
+  const Update = await softewareAdding.findByIdAndUpdate(id, [{ $set: { Active: { $not: '$Active' } } }], { new: true })
+  res.status(200).json({ status: 200, message: 'success', data: Update })
+})
+module.exports = {
+  AddCategory, FetchCategory, AddSoftware, FetchSofteares, CountSoftwares, UpdateCategory, upload,
+  UpdateSoftware, UpdateCategoryStatus,DeleteSoftware
+}
