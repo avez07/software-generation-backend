@@ -39,6 +39,13 @@ router.route('/UpdateSoftware').post(upload.fields([{name:'image'},{name:'specif
 router.route('/FetchAllSoftware/:id').get(DynamicController.FetchSofteares)
 router.route('/updateSoftwareStatus').get(DynamicController.DeleteSoftware)
 router.route('/CountSoftware').get(DynamicController.CountSoftwares)
+router.route('/FetchAllCategoryName').get(DynamicController.FetchAllCategory)
+router.route('/FetchCategorydetails/:slug').get(DynamicController.FetchCategoryDetails)
+router.route('/FetchAllSoftwareName/:slug').get(DynamicController.FetchAllSoftware)
+router.route('/FetchSoftewaredetails/:id').get(DynamicController.FetchsoftwareDetails)
+
+
+
 
 
 

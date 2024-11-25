@@ -1,0 +1,19 @@
+
+    Remote ADD: Monday, November 25th 2024, 3:46:53 pm
+    URL : http://localhost:5000/api//FetchCategorydetails/cms
+    RequestBody : {}
+    Authorization : undefine
+    Response : TypeError: Response.map is not a function
+    at C:\Users\ansar\Desktop\projects\software-generation-backend\src\Controller\DynamicPagesController.js:169:32
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    
+    Remote ADD: Monday, November 25th 2024, 3:48:15 pm
+    URL : http://localhost:5000/api//FetchCategorydetails/cmns
+    RequestBody : {}
+    Authorization : undefine
+    Response : TypeError: Cannot read properties of null (reading 'BuyerGuide')
+    at C:\Users\ansar\Desktop\projects\software-generation-backend\src\Controller\DynamicPagesController.js:171:38
+    at Array.map (<anonymous>)
+    at C:\Users\ansar\Desktop\projects\software-generation-backend\src\Controller\DynamicPagesController.js:169:34
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    

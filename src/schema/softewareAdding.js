@@ -29,10 +29,6 @@ const SoftAddingSechma = new mongoose.Schema({
         type:Array,
         require:true,
     },
-    TableContent:{
-        type:Array,
-        require:true,
-    },
     specification:{
          type:String,
         default:''

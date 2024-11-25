@@ -20,6 +20,10 @@ const SoftCAtegorySechma = new mongoose.Schema({
     BuyerGuide:{
         type: String
     },
+    TableContent:{
+        type:Array,
+        default:[]
+    },
     TableCaparison: [
         {
             type: mongoose.Schema.Types.ObjectId,
