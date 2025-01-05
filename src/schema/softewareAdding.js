@@ -31,8 +31,15 @@ const SoftAddingSechma = new mongoose.Schema({
     },
     specification:{
          type:String,
-        default:''
     },
+    WebsiteLink:{
+        type:String,
+       default:''
+   },
+    specData:{
+        type:Array,
+       default:[]
+   },
     graphScore:{
         type:Array,
         default:[]
@@ -42,6 +49,14 @@ const SoftAddingSechma = new mongoose.Schema({
             tittle:{type:String,default:''},
             content:{type:String,default:''},
 
+        }]
+    },
+    PricingData:{
+        type:[{
+            tittle:{type:String,default:''},
+            subtittle:{type:String,default:''},
+            Amount:{type:String,default:''},
+            bulletPoint:{type:Array,default:[]},
         }]
     },
     Active:{

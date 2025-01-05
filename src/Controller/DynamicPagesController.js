@@ -76,7 +76,7 @@ const UpdateCategoryStatus = asyncErrorHandller(async (req, res, next) => {
 })
 
 const AddSoftware = asyncErrorHandller(async (req, res, nex) => {
-  const { CategoryId, SoftwareName, SubTittle, discription, graphScore, SoftWareQA, KeyFeatures, TableContent, UspData } = JSON.parse(req.body.data)
+  const { CategoryId, SoftwareName,WebsiteLink,PricingData, SubTittle, discription, graphScore, SoftWareQA, KeyFeatures, specData, UspData } = JSON.parse(req.body.data)
   // return console.log(req.files)
   const encodedUspData = UspData.map(item => ({
     ...item,
@@ -89,9 +89,12 @@ const AddSoftware = asyncErrorHandller(async (req, res, nex) => {
       SoftwareName: SoftwareName,
       Image: req.files?.image[0].filename || null,
       SubTittle: SubTittle,
+      specData:specData,
+      PricingData:PricingData,
+      WebsiteLink:WebsiteLink,
       discription: he.encode(discription),
       SoftWareQA: he.encode(SoftWareQA),
-      specification: req.files?.specification[0].filename || null,
+      // specification: req.files?.specification[0].filename || null,
       KeyFeatures: KeyFeatures.map((items) => items.value),
       graphScore: graphScore,
       UspData: encodedUspData
@@ -133,7 +136,7 @@ const CountSoftwares = asyncErrorHandller(async (req, res, next) => {
 })
 
 const UpdateSoftware = asyncErrorHandller(async (req, res, next) => {
-  const { id, CategoryId, SoftwareName, SubTittle, discription, SoftWareQA, KeyFeatures, TableContent, UspData } = JSON.parse(req.body.data)
+  const { id, CategoryId, SoftwareName,PricingData, SubTittle, discription,graphScore,WebsiteLink, SoftWareQA, KeyFeatures, specData, UspData } = JSON.parse(req.body.data)
 
   if (!id) throw new CustomError('Id is Missing', 404)
   const encodedUspData = UspData.map(item => ({
@@ -145,11 +148,15 @@ const UpdateSoftware = asyncErrorHandller(async (req, res, next) => {
       CategordId: CategoryId,
       SoftwareName: SoftwareName,
       SubTittle: SubTittle,
+      specData:specData,
+      WebsiteLink:WebsiteLink,
+      graphScore:graphScore,
       discription: he.encode(discription),
       SoftWareQA: he.encode(SoftWareQA),
       KeyFeatures: KeyFeatures.map((items) => items.value),
       UspData: encodedUspData,
-      ...(req.files?.specification && { specification: req.files.specification[0].filename }),
+      PricingData:PricingData,
+      // ...(req.files?.specification && { specification: req.files.specification[0].filename }),
       ...(req.files?.image && { Image: req.files.image[0].filename })
 
     }
