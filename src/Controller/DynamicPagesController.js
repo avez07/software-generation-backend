@@ -2,12 +2,21 @@ const CustomError = require('../utils/customerror')
 const multer = require('multer')
 const asyncErrorHandller = require('../utils/asyncErrorHandller')
 const SoftwareCategory = require('../schema/SoftwareCategory')
-
 const he = require("he");
+const fs = require('fs')
 const softewareAdding = require('../schema/softewareAdding');
+const { Upload } = require("@aws-sdk/lib-storage");
+const { S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
+const dotenv = require('dotenv')
+dotenv.config()
 
-
-
+const s3 = new S3Client({
+  region: process.env.S3_REGION,
+  credentials: {
+    accessKeyId: process.env.IAM_API_KEY,
+    secretAccessKey: process.env.IAM_API_SECRET
+  }
+})
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'public/uploads/'); // Directory to save uploaded files
@@ -76,8 +85,25 @@ const UpdateCategoryStatus = asyncErrorHandller(async (req, res, next) => {
 })
 
 const AddSoftware = asyncErrorHandller(async (req, res, nex) => {
-  const { CategoryId, SoftwareName,WebsiteLink,PricingData, SubTittle, discription, graphScore, SoftWareQA, KeyFeatures, specData, UspData } = JSON.parse(req.body.data)
+  const { CategoryId, SoftwareName, WebsiteLink, PricingData, SubTittle, discription, graphScore, SoftWareQA, KeyFeatures, specData, UspData } = JSON.parse(req.body.data)
   // return console.log(req.files)
+  const file = req.file
+  const fileBuffer = fs.readFileSync(file.path)
+  const bucketName = 's3-softwarelogo-v1'
+  const key = `logo/${file.filename}`;
+  // console.log(file)
+  const params = {
+    Bucket: bucketName,
+    Key: key,
+    Body: fileBuffer,
+    ContentType: file.mimetype,
+  }
+  const command = new PutObjectCommand(params)
+  const objectresponse = await s3.send(command)
+  if (objectresponse.$metadata.httpStatusCode !== 200) throw new CustomError('Something Went Worng', 500)
+  // console.log(objectresponse.$metadata.httpStatusCode,req.body.data)
+  const s3Url = `https://${bucketName}.s3.ap-south-1.amazonaws.com/${key}`
+  await fs.unlink(file.path)
   const encodedUspData = UspData.map(item => ({
     ...item,
     content: he.encode(item.content)
@@ -87,11 +113,11 @@ const AddSoftware = asyncErrorHandller(async (req, res, nex) => {
     $set: {
       CategordId: CategoryId,
       SoftwareName: SoftwareName,
-      Image: req.files?.image[0].filename || null,
+      Image: s3Url,//req.files?.image[0].filename || null,
       SubTittle: SubTittle,
-      specData:specData,
-      PricingData:PricingData,
-      WebsiteLink:WebsiteLink,
+      specData: specData,
+      PricingData: PricingData,
+      WebsiteLink: WebsiteLink,
       discription: he.encode(discription),
       SoftWareQA: he.encode(SoftWareQA),
       // specification: req.files?.specification[0].filename || null,
@@ -101,7 +127,8 @@ const AddSoftware = asyncErrorHandller(async (req, res, nex) => {
     }
   }
   const response = await softewareAdding.findOneAndUpdate(filter, update, { upsert: true, returnOriginal: false })
-  res.status(200).json({ status: 200, message: 'success', documentId: response?._id, })
+  // console.log('response',response)
+  res.status(200).json({ status: 200, message: 'success', documentId: response?._id })
 })
 const FetchSofteares = asyncErrorHandller(async (req, res, next) => {
   const { id } = req.params
@@ -136,9 +163,39 @@ const CountSoftwares = asyncErrorHandller(async (req, res, next) => {
 })
 
 const UpdateSoftware = asyncErrorHandller(async (req, res, next) => {
-  const { id, CategoryId, SoftwareName,PricingData, SubTittle, discription,graphScore,WebsiteLink, SoftWareQA, KeyFeatures, specData, UspData } = JSON.parse(req.body.data)
+  const { id, CategoryId, SoftwareName, PricingData, SubTittle, discription, graphScore, WebsiteLink, SoftWareQA, KeyFeatures, specData, UspData } = JSON.parse(req.body.data)
 
   if (!id) throw new CustomError('Id is Missing', 404)
+  const LastObj = await softewareAdding.findById(id).select('Image').lean()
+let s3Url = ''
+  if (req.file) {
+    // console.log(LastObj)
+    const file = req.file
+    const fileBuffer = fs.readFileSync(file.path)
+    const imageParts = LastObj.Image.split('/'); // Split the URL by '/'
+    const deleteObj = imageParts[imageParts.length - 1];
+    // return console.log(deleteObj)
+    const bucketName = 's3-softwarelogo-v1'
+    const key = `logo/${deleteObj}`;
+    const params = {
+      Bucket: bucketName,
+      Key: key,
+    }
+    const command = new DeleteObjectCommand(params)
+    const objectresponse = await s3.send(command)
+
+    const params2 = {
+      Bucket: bucketName,
+      Key: key,
+      Body: fileBuffer,
+      ContentType: file.mimetype,
+    }
+    const command2 = new PutObjectCommand(params2)
+    const objectresponse2 = await s3.send(command2)
+   s3Url = `https://${bucketName}.s3.ap-south-1.amazonaws.com/${key}`
+   await fs.unlink(file.path)
+
+  }
   const encodedUspData = UspData.map(item => ({
     ...item,
     content: he.encode(item.content)
@@ -148,16 +205,16 @@ const UpdateSoftware = asyncErrorHandller(async (req, res, next) => {
       CategordId: CategoryId,
       SoftwareName: SoftwareName,
       SubTittle: SubTittle,
-      specData:specData,
-      WebsiteLink:WebsiteLink,
-      graphScore:graphScore,
+      specData: specData,
+      WebsiteLink: WebsiteLink,
+      graphScore: graphScore,
       discription: he.encode(discription),
       SoftWareQA: he.encode(SoftWareQA),
       KeyFeatures: KeyFeatures.map((items) => items.value),
       UspData: encodedUspData,
-      PricingData:PricingData,
+      PricingData: PricingData,
       // ...(req.files?.specification && { specification: req.files.specification[0].filename }),
-      ...(req.files?.image && { Image: req.files.image[0].filename })
+      ...(req.file && { Image: s3Url })
 
     }
   }
@@ -191,31 +248,31 @@ const FetchAllSoftware = asyncErrorHandller(async (req, res, next) => {
   const { slug } = req.params
   const CategoryId = await SoftwareCategory.findOne({ slug: slug }).select('_id').lean()
   if (!CategoryId) throw new CustomError('Category Not found', 404)
-    const Software = await softewareAdding.find({ CategordId: CategoryId._id }).select('SoftwareName Image discription').lean()
-  if(Software.length == 0) throw new CustomError('Software Not found', 404)
-    const MappingData = await Software.map((item) => {
-  item.discription = he.decode(item.discription);
-  return { ...item };
-});
+  const Software = await softewareAdding.find({ CategordId: CategoryId._id }).select('SoftwareName Image discription').lean()
+  if (Software.length == 0) throw new CustomError('Software Not found', 404)
+  const MappingData = await Software.map((item) => {
+    item.discription = he.decode(item.discription);
+    return { ...item };
+  });
   res.status(200).json({ status: 200, message: 'success', data: MappingData })
 
 
 })
-const FetchsoftwareDetails = asyncErrorHandller(async(req,res,next)=>{
+const FetchsoftwareDetails = asyncErrorHandller(async (req, res, next) => {
   const { id } = req.params
   const software = await softewareAdding.findById(id).lean()
   if (!software) throw new CustomError('Category Not found', 404)
-    const MappingData = await [software].map((item) => {
-      item.discription = he.decode(item.discription);
-      return { ...item };
+  const MappingData = await [software].map((item) => {
+    item.discription = he.decode(item.discription);
+    return { ...item };
 
-})
-res.status(200).json({ status: 200, message: 'success', data: MappingData[0] })
+  })
+  res.status(200).json({ status: 200, message: 'success', data: MappingData[0] })
 
 })
 
 module.exports = {
   AddCategory, FetchCategory, AddSoftware, FetchSofteares, CountSoftwares, UpdateCategory, upload,
-  UpdateSoftware, UpdateCategoryStatus, DeleteSoftware, FetchAllCategory, FetchCategoryDetails,FetchAllSoftware,
+  UpdateSoftware, UpdateCategoryStatus, DeleteSoftware, FetchAllCategory, FetchCategoryDetails, FetchAllSoftware,
   FetchsoftwareDetails
 }
