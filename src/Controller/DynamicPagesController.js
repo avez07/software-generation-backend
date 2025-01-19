@@ -270,8 +270,13 @@ const FetchsoftwareDetails = asyncErrorHandller(async (req, res, next) => {
   res.status(200).json({ status: 200, message: 'success', data: MappingData[0] })
 
 })
+const healthCheck = asyncErrorHandller(async (req,res,next)=>{
+const name = process.env.Name || 'Avez'
+res.status(200).json({Name:`Hi My Name Is ${name}`})
+})
 
 module.exports = {
+  healthCheck,
   AddCategory, FetchCategory, AddSoftware, FetchSofteares, CountSoftwares, UpdateCategory, upload,
   UpdateSoftware, UpdateCategoryStatus, DeleteSoftware, FetchAllCategory, FetchCategoryDetails, FetchAllSoftware,
   FetchsoftwareDetails

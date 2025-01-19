@@ -7,7 +7,7 @@ const {upload} = require('../Controller/DynamicPagesController')
 
 
 const router = express.Router()
-
+router.route('/healthCheck').get(DynamicController.healthCheck)
 router.route('/UserRegister').post(RegisterController.UserRegistration)
 router.route('/softwareListed').post(RegisterController.softwareListed)
 router.route('/trendingDemo').post(RegisterController.trendingSoftdemo)
