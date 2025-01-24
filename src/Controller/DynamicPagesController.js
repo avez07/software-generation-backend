@@ -4,6 +4,7 @@ const asyncErrorHandller = require('../utils/asyncErrorHandller')
 const SoftwareCategory = require('../schema/SoftwareCategory')
 const he = require("he");
 const fs = require('fs')
+const path = require('path')
 const softewareAdding = require('../schema/softewareAdding');
 const { Upload } = require("@aws-sdk/lib-storage");
 const { S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
@@ -103,12 +104,14 @@ const AddSoftware = asyncErrorHandller(async (req, res, nex) => {
   if (objectresponse.$metadata.httpStatusCode !== 200) throw new CustomError('Something Went Worng', 500)
   // console.log(objectresponse.$metadata.httpStatusCode,req.body.data)
   const s3Url = `https://${bucketName}.s3.ap-south-1.amazonaws.com/${key}`
-  await fs.unlink(file.path)
+  console.log(file)
+  const fullPath = path.join(file.destination, file.filename);
+    await fs.promises.unlink(fullPath); // This works with promises
   const encodedUspData = UspData.map(item => ({
     ...item,
     content: he.encode(item.content)
   }));
-  const filter = { SoftwareName: SoftwareName }
+  const filter = { SoftwareName: SoftwareName ,CategordId:CategoryId}
   const update = {
     $set: {
       CategordId: CategoryId,
@@ -127,7 +130,6 @@ const AddSoftware = asyncErrorHandller(async (req, res, nex) => {
     }
   }
   const response = await softewareAdding.findOneAndUpdate(filter, update, { upsert: true, returnOriginal: false })
-  // console.log('response',response)
   res.status(200).json({ status: 200, message: 'success', documentId: response?._id })
 })
 const FetchSofteares = asyncErrorHandller(async (req, res, next) => {
@@ -193,7 +195,8 @@ let s3Url = ''
     const command2 = new PutObjectCommand(params2)
     const objectresponse2 = await s3.send(command2)
    s3Url = `https://${bucketName}.s3.ap-south-1.amazonaws.com/${key}`
-   await fs.unlink(file.path)
+   const fullPath = file.destination + file.filename
+   await fs.promises.unlink(fullPath)
 
   }
   const encodedUspData = UspData.map(item => ({
@@ -272,7 +275,7 @@ const FetchsoftwareDetails = asyncErrorHandller(async (req, res, next) => {
 })
 const healthCheck = asyncErrorHandller(async (req,res,next)=>{
 const name = process.env.Name || 'Avez'
-res.status(200).json({Name:`Hi My Name Is ${name}`})
+res.status(200).json({Name:`Hi My Name Is ${name} 2`})
 })
 
 module.exports = {
