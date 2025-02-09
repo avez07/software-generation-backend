@@ -106,12 +106,12 @@ const AddSoftware = asyncErrorHandller(async (req, res, nex) => {
   const s3Url = `https://${bucketName}.s3.ap-south-1.amazonaws.com/${key}`
   console.log(file)
   const fullPath = path.join(file.destination, file.filename);
-    await fs.promises.unlink(fullPath); // This works with promises
+  await fs.promises.unlink(fullPath); // This works with promises
   const encodedUspData = UspData.map(item => ({
     ...item,
     content: he.encode(item.content)
   }));
-  const filter = { SoftwareName: SoftwareName ,CategordId:CategoryId}
+  const filter = { SoftwareName: SoftwareName, CategordId: CategoryId }
   const update = {
     $set: {
       CategordId: CategoryId,
@@ -135,7 +135,7 @@ const AddSoftware = asyncErrorHandller(async (req, res, nex) => {
 const FetchSofteares = asyncErrorHandller(async (req, res, next) => {
   const { id } = req.params
 
-  const Data = await softewareAdding.find({ CategordId: id, Active: true }).lean()
+  const Data = await softewareAdding.find({ CategordId: id, Active: true }).sort({ position: 1 }).lean()
   const MappingData = Data.map((item) => {
     const encodedUspData = item.UspData.map(items => ({
       ...items,
@@ -169,7 +169,7 @@ const UpdateSoftware = asyncErrorHandller(async (req, res, next) => {
 
   if (!id) throw new CustomError('Id is Missing', 404)
   const LastObj = await softewareAdding.findById(id).select('Image').lean()
-let s3Url = ''
+  let s3Url = ''
   if (req.file) {
     // console.log(LastObj)
     const file = req.file
@@ -194,9 +194,9 @@ let s3Url = ''
     }
     const command2 = new PutObjectCommand(params2)
     const objectresponse2 = await s3.send(command2)
-   s3Url = `https://${bucketName}.s3.ap-south-1.amazonaws.com/${key}`
-   const fullPath = file.destination + file.filename
-   await fs.promises.unlink(fullPath)
+    s3Url = `https://${bucketName}.s3.ap-south-1.amazonaws.com/${key}`
+    const fullPath = file.destination + file.filename
+    await fs.promises.unlink(fullPath)
 
   }
   const encodedUspData = UspData.map(item => ({
@@ -251,7 +251,7 @@ const FetchAllSoftware = asyncErrorHandller(async (req, res, next) => {
   const { slug } = req.params
   const CategoryId = await SoftwareCategory.findOne({ slug: slug }).select('_id').lean()
   if (!CategoryId) throw new CustomError('Category Not found', 404)
-  const Software = await softewareAdding.find({ CategordId: CategoryId._id }).select('SoftwareName Image discription').lean()
+  const Software = await softewareAdding.find({ CategordId: CategoryId._id }).select('SoftwareName Image discription').sort({ position: 1 }).lean()
   if (Software.length == 0) throw new CustomError('Software Not found', 404)
   const MappingData = await Software.map((item) => {
     item.discription = he.decode(item.discription);
@@ -273,14 +273,57 @@ const FetchsoftwareDetails = asyncErrorHandller(async (req, res, next) => {
   res.status(200).json({ status: 200, message: 'success', data: MappingData[0] })
 
 })
-const healthCheck = asyncErrorHandller(async (req,res,next)=>{
-const name = process.env.Name || 'Avez'
-res.status(200).json({Name:`Hi My Name Is ${name} 2`})
+const DemoFunction = async (req, res, next) => {
+  try {
+    const softwares = await softewareAdding.find({}).sort({ categoryId: 1, position: 1 }).lean();
+
+    let currentCategory = null;
+    let positionCounter = 1;
+
+    for (let i = 0; i < softwares.length; i++) {
+      if (!currentCategory || !softwares[i].categoryId.equals(currentCategory)) {
+        currentCategory = softwares[i].categoryId; // Switch to a new category
+        positionCounter = 1; // Reset the position counter for the new category
+      }
+
+      // Update the position if it's not correct
+      if (softwares[i].position !== positionCounter) {
+        await softewareAdding.findByIdAndUpdate(softwares[i]._id, { position: positionCounter });
+      }
+
+      positionCounter++;
+    }
+
+    res.status(200).json({ message: 'Positions updated successfully.' });
+  } catch (error) {
+    next(error); // Pass the error to the next middleware
+  }
+};
+const SoftwarePostionSet = asyncErrorHandller(async (req, res, next) => {
+  
+    const { softwarePosition, categoryId } = req.body;
+
+    if (!softwarePosition || !Array.isArray(softwarePosition) || softwarePosition.length === 0) throw new CustomError('Invalid softwarePosition array.',400)
+    if (!categoryId) throw new CustomError('categoryId is required.',400)
+    for (const { softwareId, position } of softwarePosition) {
+      if (!softwareId || !position) continue; 
+      await softewareAdding.findOneAndUpdate(
+        { _id: softwareId, CategordId:categoryId },  
+        {position: position },                                       
+      );
+    }
+
+    res.status(200).json({ message: 'Positions updated successfully.' });
+ 
+})
+const healthCheck = asyncErrorHandller(async (req, res, next) => {
+  const name = process.env.Name || 'Avez'
+  res.status(200).json({ Name: `Hi My Name Is ${name} 2` })
 })
 
 module.exports = {
   healthCheck,
   AddCategory, FetchCategory, AddSoftware, FetchSofteares, CountSoftwares, UpdateCategory, upload,
   UpdateSoftware, UpdateCategoryStatus, DeleteSoftware, FetchAllCategory, FetchCategoryDetails, FetchAllSoftware,
-  FetchsoftwareDetails
+  FetchsoftwareDetails, DemoFunction,SoftwarePostionSet
 }

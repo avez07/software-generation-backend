@@ -29,6 +29,7 @@ router.route('/softpricing').get(RetiveController.getpricing)
 router.route('/categorySoft').get(RetiveController.CategorySotware)
 router.route('/review').get(RetiveController.review)
 
+
 //dynamic routing 
 router.route('/AddCategory').post(DynamicController.AddCategory)
 router.route('/UpdateCategory').post(DynamicController.UpdateCategory)
@@ -43,6 +44,10 @@ router.route('/FetchAllCategoryName').get(DynamicController.FetchAllCategory)
 router.route('/FetchCategorydetails/:slug').get(DynamicController.FetchCategoryDetails)
 router.route('/FetchAllSoftwareName/:slug').get(DynamicController.FetchAllSoftware)
 router.route('/FetchSoftewaredetails/:id').get(DynamicController.FetchsoftwareDetails)
+router.route('/demo1').get(DynamicController.DemoFunction)
+router.route('/softranked').post(DynamicController.SoftwarePostionSet)
+
+
 
 
 
