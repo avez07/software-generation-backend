@@ -43,6 +43,15 @@ const SoftAddingSechma = new mongoose.Schema({
     position: {
         type: Number,
     },
+    MetaKeyWords: {
+        type: Array,
+    },
+    MetaDiscription: {
+        type: String,
+    },
+    MetaTittle: {
+        type: String,
+    },
     graphScore: {
         type: Array,
         default: []

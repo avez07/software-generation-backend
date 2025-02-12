@@ -86,7 +86,7 @@ const UpdateCategoryStatus = asyncErrorHandller(async (req, res, next) => {
 })
 
 const AddSoftware = asyncErrorHandller(async (req, res, nex) => {
-  const { CategoryId, SoftwareName, WebsiteLink, PricingData, SubTittle, discription, graphScore, SoftWareQA, KeyFeatures, specData, UspData } = JSON.parse(req.body.data)
+  const { CategoryId, SoftwareName, WebsiteLink, PricingData, SubTittle, discription, graphScore, SoftWareQA, KeyFeatures, specData, UspData,Metatittle,MetaDiscription,MetaKeyWord } = JSON.parse(req.body.data)
   // return console.log(req.files)
   const file = req.file
   const fileBuffer = fs.readFileSync(file.path)
@@ -123,7 +123,9 @@ const AddSoftware = asyncErrorHandller(async (req, res, nex) => {
       WebsiteLink: WebsiteLink,
       discription: he.encode(discription),
       SoftWareQA: he.encode(SoftWareQA),
-      // specification: req.files?.specification[0].filename || null,
+      MetaTittle: Metatittle,
+      MetaDiscription: MetaDiscription,
+      MetaKeyWords: MetaKeyWord.map((items) => items.value),
       KeyFeatures: KeyFeatures.map((items) => items.value),
       graphScore: graphScore,
       UspData: encodedUspData
@@ -165,7 +167,8 @@ const CountSoftwares = asyncErrorHandller(async (req, res, next) => {
 })
 
 const UpdateSoftware = asyncErrorHandller(async (req, res, next) => {
-  const { id, CategoryId, SoftwareName, PricingData, SubTittle, discription, graphScore, WebsiteLink, SoftWareQA, KeyFeatures, specData, UspData } = JSON.parse(req.body.data)
+  const { id, CategoryId, SoftwareName, PricingData, SubTittle, discription, graphScore, WebsiteLink, SoftWareQA, KeyFeatures, specData, UspData,Metatittle,MetaDiscription,MetaKeyWord } = JSON.parse(req.body.data)
+  // console.log(Metatittle)
 
   if (!id) throw new CustomError('Id is Missing', 404)
   const LastObj = await softewareAdding.findById(id).select('Image').lean()
@@ -215,6 +218,9 @@ const UpdateSoftware = asyncErrorHandller(async (req, res, next) => {
       SoftWareQA: he.encode(SoftWareQA),
       KeyFeatures: KeyFeatures.map((items) => items.value),
       UspData: encodedUspData,
+      MetaTittle: Metatittle,
+      MetaDiscription: MetaDiscription,
+      MetaKeyWords: MetaKeyWord.map((items) => items.value),
       PricingData: PricingData,
       // ...(req.files?.specification && { specification: req.files.specification[0].filename }),
       ...(req.file && { Image: s3Url })
