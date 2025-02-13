@@ -29,7 +29,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 const AddCategory = asyncErrorHandller(async (req, res, next) => {
-  const { SlugName, CategoryName, discription, BuyersGuide, Camparision, TableContent } = req.body
+  const { SlugName, CategoryName, discription, BuyersGuide, Camparision, TableContent,Metatittle,MetaDiscription,MetaKeyWord ,position} = req.body
   const filter = {
     slug: new RegExp(`^${SlugName}$`, "i"), // Case-insensitive for field1
     CategoryName: new RegExp(`^${CategoryName}$`, "i"), // Case-insensitive for field2
@@ -42,6 +42,10 @@ const AddCategory = asyncErrorHandller(async (req, res, next) => {
       Discription: he.encode(discription),
       BuyerGuide: he.encode(BuyersGuide),
       TableCaparison: Camparision,
+      MetaTittle: Metatittle,
+      position:position,
+      MetaDiscription: MetaDiscription,
+      MetaKeyWords: MetaKeyWord.map((items) => items.value),
       TableContent: TableContent.map((items) => items.value),
 
     }
@@ -50,7 +54,7 @@ const AddCategory = asyncErrorHandller(async (req, res, next) => {
   res.status(200).json({ status: 200, message: 'success', documentId: Data?._id, })
 })
 const UpdateCategory = asyncErrorHandller(async (req, res, next) => {
-  const { id, SlugName, CategoryName, discription, BuyersGuide, Camparision, TableContent } = req.body
+  const { id, SlugName, CategoryName, discription, BuyersGuide, Camparision, TableContent,Metatittle, MetaDiscription,MetaKeyWord,position} = req.body
   if (!id) throw new CustomError('Id is Missing', 404)
   const update = {
     $set: {
@@ -59,6 +63,10 @@ const UpdateCategory = asyncErrorHandller(async (req, res, next) => {
       Discription: he.encode(discription),
       BuyerGuide: he.encode(BuyersGuide),
       TableCaparison: Camparision,
+      MetaTittle: Metatittle,
+      MetaDiscription: MetaDiscription,
+      position:position,
+      MetaKeyWords: MetaKeyWord.map((items) => items.value),
       TableContent: TableContent.map((items) => items.value),
     }
   };
