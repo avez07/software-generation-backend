@@ -30,12 +30,18 @@ const SoftCAtegorySechma = new mongoose.Schema({
     },
     MetaKeyWords: {
         type: Array,
+        default: []
+
     },
     MetaDiscription: {
         type: String,
+        default: ''
+
     },
     MetaTittle: {
         type: String,
+        default: ''
+
     },
     TableCaparison: [
         {
