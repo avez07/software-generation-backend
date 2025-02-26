@@ -246,7 +246,7 @@ const DeleteSoftware = asyncErrorHandller(async (req, res, next) => {
 })
 
 const FetchAllCategory = asyncErrorHandller(async (req, res, next) => {
-  const Response = await SoftwareCategory.find({}).select("slug CategoryName position -_id").lean()
+  const Response = await SoftwareCategory.find({Active:true}).select("slug Active CategoryName position -_id").lean()
   res.status(200).json({ status: 200, message: 'success', data: Response })
 })
 const FetchCategoryDetails = asyncErrorHandller(async (req, res, next) => {
