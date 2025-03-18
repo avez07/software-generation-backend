@@ -29,7 +29,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 const AddCategory = asyncErrorHandller(async (req, res, next) => {
-  const { SlugName, CategoryName, discription, BuyersGuide, Camparision, TableContent,Metatittle,MetaDiscription,MetaKeyWord ,position} = req.body
+  const { SlugName, CategoryName, discription, BuyersGuide, Camparision, TableContent, Metatittle, MetaDiscription, MetaKeyWord, position } = req.body
   const filter = {
     slug: new RegExp(`^${SlugName}$`, "i"), // Case-insensitive for field1
     CategoryName: new RegExp(`^${CategoryName}$`, "i"), // Case-insensitive for field2
@@ -43,7 +43,7 @@ const AddCategory = asyncErrorHandller(async (req, res, next) => {
       BuyerGuide: he.encode(BuyersGuide),
       TableCaparison: Camparision,
       MetaTittle: Metatittle,
-      position:position,
+      position: position,
       MetaDiscription: MetaDiscription,
       MetaKeyWords: MetaKeyWord.map((items) => items.value),
       TableContent: TableContent.map((items) => items.value),
@@ -54,7 +54,7 @@ const AddCategory = asyncErrorHandller(async (req, res, next) => {
   res.status(200).json({ status: 200, message: 'success', documentId: Data?._id, })
 })
 const UpdateCategory = asyncErrorHandller(async (req, res, next) => {
-  const { id, SlugName, CategoryName, discription, BuyersGuide, Camparision, TableContent,Metatittle, MetaDiscription,MetaKeyWord,position} = req.body
+  const { id, SlugName, CategoryName, discription, BuyersGuide, Camparision, TableContent, Metatittle, MetaDiscription, MetaKeyWord, position } = req.body
   if (!id) throw new CustomError('Id is Missing', 404)
   const update = {
     $set: {
@@ -65,7 +65,7 @@ const UpdateCategory = asyncErrorHandller(async (req, res, next) => {
       TableCaparison: Camparision,
       MetaTittle: Metatittle,
       MetaDiscription: MetaDiscription,
-      position:position,
+      position: position,
       MetaKeyWords: MetaKeyWord.map((items) => items.value),
       TableContent: TableContent.map((items) => items.value),
     }
@@ -94,7 +94,7 @@ const UpdateCategoryStatus = asyncErrorHandller(async (req, res, next) => {
 })
 
 const AddSoftware = asyncErrorHandller(async (req, res, nex) => {
-  const { CategoryId, SoftwareName, WebsiteLink, PricingData, SubTittle, discription, graphScore, SoftWareQA, KeyFeatures, specData, UspData,Metatittle,MetaDiscription,MetaKeyWord } = JSON.parse(req.body.data)
+  const { CategoryId, SoftwareName, WebsiteLink, PricingData, SubTittle, discription, graphScore, SoftWareQA, KeyFeatures, specData, UspData, Metatittle, MetaDiscription, MetaKeyWord } = JSON.parse(req.body.data)
   // return console.log(req.files)
   const file = req.file
   const fileBuffer = fs.readFileSync(file.path)
@@ -175,7 +175,7 @@ const CountSoftwares = asyncErrorHandller(async (req, res, next) => {
 })
 
 const UpdateSoftware = asyncErrorHandller(async (req, res, next) => {
-  const { id, CategoryId, SoftwareName, PricingData, SubTittle, discription, graphScore, WebsiteLink, SoftWareQA, KeyFeatures, specData, UspData,Metatittle,MetaDiscription,MetaKeyWord } = JSON.parse(req.body.data)
+  const { id, CategoryId, SoftwareName, PricingData, SubTittle, discription, graphScore, WebsiteLink, SoftWareQA, KeyFeatures, specData, UspData, Metatittle, MetaDiscription, MetaKeyWord } = JSON.parse(req.body.data)
   // console.log(Metatittle)
 
   if (!id) throw new CustomError('Id is Missing', 404)
@@ -246,7 +246,7 @@ const DeleteSoftware = asyncErrorHandller(async (req, res, next) => {
 })
 
 const FetchAllCategory = asyncErrorHandller(async (req, res, next) => {
-  const Response = await SoftwareCategory.find({Active:true}).select("slug Active CategoryName position -_id").lean()
+  const Response = await SoftwareCategory.find({ Active: true }).select("slug Active CategoryName position -_id").lean()
   res.status(200).json({ status: 200, message: 'success', data: Response })
 })
 const FetchCategoryDetails = asyncErrorHandller(async (req, res, next) => {
@@ -287,6 +287,22 @@ const FetchsoftwareDetails = asyncErrorHandller(async (req, res, next) => {
   res.status(200).json({ status: 200, message: 'success', data: MappingData[0] })
 
 })
+const FetchAllSoftwareNew = asyncErrorHandller(async (req, res, next) => {
+  const AllSoftware = await softewareAdding.find({}).select('CategordId SoftwareName  _id').populate({ path: 'CategordId', select: 'slug CategoryName' }).lean()
+  res.status(200).json({ status: 200, message: 'success', data: AllSoftware })
+})
+const UpdateAllSoftwareNew = asyncErrorHandller(async (req, res, next) => {
+  const AllSoftware = await softewareAdding.find({}).select('CategordId _id').lean()
+  // const Id = []
+  const allSoftware = await softewareAdding.find({}).select('CategordId _id').lean();
+  const ids = await Promise.all(allSoftware.map(async (element) => {
+    const category = await SoftwareCategory.findById(element.CategordId).lean();
+    await softewareAdding.findByIdAndUpdate(element._id, { CategordId: element.CategordId });
+    return category ? element : null;
+  }));
+
+  res.status(200).json({ status: 200, message: 'success', data: ids })
+})
 const DemoFunction = async (req, res, next) => {
   try {
     const softwares = await softewareAdding.find({}).sort({ categoryId: 1, position: 1 }).lean();
@@ -314,21 +330,21 @@ const DemoFunction = async (req, res, next) => {
   }
 };
 const SoftwarePostionSet = asyncErrorHandller(async (req, res, next) => {
-  
-    const { softwarePosition, categoryId } = req.body;
 
-    if (!softwarePosition || !Array.isArray(softwarePosition) || softwarePosition.length === 0) throw new CustomError('Invalid softwarePosition array.',400)
-    if (!categoryId) throw new CustomError('categoryId is required.',400)
-    for (const { softwareId, position } of softwarePosition) {
-      if (!softwareId || !position) continue; 
-      await softewareAdding.findOneAndUpdate(
-        { _id: softwareId, CategordId:categoryId },  
-        {position: position },                                       
-      );
-    }
+  const { softwarePosition, categoryId } = req.body;
 
-    res.status(200).json({ message: 'Positions updated successfully.' });
- 
+  if (!softwarePosition || !Array.isArray(softwarePosition) || softwarePosition.length === 0) throw new CustomError('Invalid softwarePosition array.', 400)
+  if (!categoryId) throw new CustomError('categoryId is required.', 400)
+  for (const { softwareId, position } of softwarePosition) {
+    if (!softwareId || !position) continue;
+    await softewareAdding.findOneAndUpdate(
+      { _id: softwareId, CategordId: categoryId },
+      { position: position },
+    );
+  }
+
+  res.status(200).json({ message: 'Positions updated successfully.' });
+
 })
 const healthCheck = asyncErrorHandller(async (req, res, next) => {
   const name = process.env.Name || 'Avez'
@@ -339,5 +355,5 @@ module.exports = {
   healthCheck,
   AddCategory, FetchCategory, AddSoftware, FetchSofteares, CountSoftwares, UpdateCategory, upload,
   UpdateSoftware, UpdateCategoryStatus, DeleteSoftware, FetchAllCategory, FetchCategoryDetails, FetchAllSoftware,
-  FetchsoftwareDetails, DemoFunction,SoftwarePostionSet
+  FetchsoftwareDetails, DemoFunction, SoftwarePostionSet, FetchAllSoftwareNew, UpdateAllSoftwareNew
 }

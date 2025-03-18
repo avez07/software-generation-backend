@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const SoftAddingSechma = new mongoose.Schema({
     CategordId: {
         type: mongoose.Schema.Types.ObjectId,
+        ref:'SoftwareCategory',
         require: true,
     },
     SoftwareName: {

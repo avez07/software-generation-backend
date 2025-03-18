@@ -46,6 +46,8 @@ router.route('/FetchAllSoftwareName/:slug').get(DynamicController.FetchAllSoftwa
 router.route('/FetchSoftewaredetails/:id').get(DynamicController.FetchsoftwareDetails)
 router.route('/demo1').get(DynamicController.DemoFunction)
 router.route('/softranked').post(DynamicController.SoftwarePostionSet)
+router.route('/AllSoft').get(DynamicController.FetchAllSoftwareNew)
+
 
 
 
