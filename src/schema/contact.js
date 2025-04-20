@@ -31,13 +31,7 @@ const Contact = new mongoose.Schema({
   Message: {
     type: String,
     required: true
-  },
-  FeildName: {
-    type: String,
-    required: true
-  }
-
-  
+  },  
  
 }, { timestamps: true ,versionKey:false},);
 

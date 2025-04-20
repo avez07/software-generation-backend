@@ -147,20 +147,19 @@ const review = asyncErrorHandller(async(req,res,next)=>{
        res.status(200).json({status:200,message:'success'});
 })
 const AddContact = asyncErrorHandller(async(req,res,next)=>{
-    const requiredFields  = ['fullName','phoneNo','email','Message','FeildName']
+    const requiredFields  = ['fullName','phoneNo','email','Message']
     for (const field of requiredFields) {
         if (!req.body[field] || req.body[field].toString().trim() === '') {
           throw new CustomError(`${field} is required and cannot be empty`,400)         
         }
       }
-      const {fullName,phoneNo,email,Message,FeildName} = req.body
+      const {fullName,phoneNo,email,Message} = req.body
       
     const response = new contact({
         fullName:fullName,
         phoneNo:phoneNo,
         email:email,
         Message:Message, 
-        FeildName:FeildName
     })
     
     await response.save()
