@@ -1,5 +1,6 @@
 const Campare = require('../schema/camparissionForm')
 const softCategory = require('../schema/category')
+const contact = require('../schema/contact')
 const freeDemo = require('../schema/freeDemo')
 const GetPricing = require('../schema/pricing')
 const UserReview = require('../schema/review')
@@ -145,4 +146,25 @@ const review = asyncErrorHandller(async(req,res,next)=>{
        await response.save();
        res.status(200).json({status:200,message:'success'});
 })
-module.exports = {UserRegistration,softwareListed,trendingSoftdemo,freeDemosoft,getPricing,campareForm,softwareCategory,uspAndfetures,review}
+const AddContact = asyncErrorHandller(async(req,res,next)=>{
+    const requiredFields  = ['fullName','phoneNo','email','Message','FeildName']
+    for (const field of requiredFields) {
+        if (!req.body[field] || req.body[field].toString().trim() === '') {
+          throw new CustomError(`${field} is required and cannot be empty`,400)         
+        }
+      }
+      const {fullName,phoneNo,email,Message,FeildName} = req.body
+      
+    const response = new contact({
+        fullName:fullName,
+        phoneNo:phoneNo,
+        email:email,
+        Message:Message, 
+        FeildName:FeildName
+    })
+    
+    await response.save()
+    console.log(response)
+    res.status(200).json({status:200,message:'success'});
+})
+module.exports = {UserRegistration,softwareListed,trendingSoftdemo,freeDemosoft,getPricing,campareForm,softwareCategory,uspAndfetures,review,AddContact}

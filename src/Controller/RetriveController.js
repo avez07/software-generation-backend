@@ -1,5 +1,6 @@
 const Campare = require('../schema/camparissionForm')
 const softCategory = require('../schema/category')
+const contact = require('../schema/contact')
 const freeDemo = require('../schema/freeDemo')
 const GetPricing = require('../schema/pricing')
 const UserReview = require('../schema/review')
@@ -103,6 +104,41 @@ const review = asyncErrorHandller(async (req, res, next) => {
     })
     res.status(200).json({ message: 'success', status: 200, data: response })
 })
+const Contact = asyncErrorHandller(async (req, res, next) => {
+    // Get pagination values from query params
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Get total count for pagination metadata
+    const total = await contact.countDocuments();
+
+    // Fetch paginated results
+    const response = await contact.find({})
+        .select('-_id -__v')
+        .skip(skip)
+        .limit(limit)
+        .lean();
+
+    // Format date fields
+    const formattedResponse = response.map((items) => {
+        items.createdAt = UtctoLocalString(items.createdAt, 'YYYY-MM-DD HH:mm:ss');
+        items.updatedAt = UtctoLocalString(items.updatedAt, 'YYYY-MM-DD HH:mm:ss');
+        return items;
+    });
+
+    res.status(200).json({
+        message: 'success',
+        status: 200,
+        data: formattedResponse,
+        pagination: {
+            total,
+            page,
+            limit,
+            totalPages: Math.ceil(total / limit),
+        },
+    });
+});
 
 
-module.exports = { userAuth, trendingSoftrware, campareSoft, freeDemoCate, CategorySotware,softwareListed ,uspAndFetuer,getpricing,review}
+module.exports = { userAuth, trendingSoftrware, campareSoft, freeDemoCate, CategorySotware,softwareListed ,uspAndFetuer,getpricing,review,Contact}
