@@ -8,7 +8,8 @@ const path = require('path')
 const softewareAdding = require('../schema/softewareAdding');
 const { Upload } = require("@aws-sdk/lib-storage");
 const { S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
-const dotenv = require('dotenv')
+const dotenv = require('dotenv');
+const Adverties = require('../schema/advertising');
 dotenv.config()
 
 const s3 = new S3Client({
@@ -20,7 +21,8 @@ const s3 = new S3Client({
 })
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'public/uploads/'); // Directory to save uploaded files
+    // console.log(req)
+    cb(null, 'public/uploads'); // Directory to save uploaded files
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + '-' + file.originalname); // Set a unique filename
@@ -95,7 +97,8 @@ const UpdateCategoryStatus = asyncErrorHandller(async (req, res, next) => {
 
 const AddSoftware = asyncErrorHandller(async (req, res, nex) => {
   const { CategoryId, SoftwareName, WebsiteLink, PricingData, SubTittle, discription, graphScore, SoftWareQA, KeyFeatures, specData, UspData, Metatittle, MetaDiscription, MetaKeyWord } = JSON.parse(req.body.data)
-  // return console.log(req.files)
+  return res.status(200).json({ status: 200, message: 'success' })
+
   const file = req.file
   const fileBuffer = fs.readFileSync(file.path)
   const bucketName = 's3-softwarelogo-v1'
@@ -112,7 +115,7 @@ const AddSoftware = asyncErrorHandller(async (req, res, nex) => {
   if (objectresponse.$metadata.httpStatusCode !== 200) throw new CustomError('Something Went Worng', 500)
   // console.log(objectresponse.$metadata.httpStatusCode,req.body.data)
   const s3Url = `https://${bucketName}.s3.ap-south-1.amazonaws.com/${key}`
-  console.log(file)
+  // console.log(file)
   const fullPath = path.join(file.destination, file.filename);
   await fs.promises.unlink(fullPath); // This works with promises
   const encodedUspData = UspData.map(item => ({
@@ -351,9 +354,147 @@ const healthCheck = asyncErrorHandller(async (req, res, next) => {
   res.status(200).json({ Name: `Hi My Name Is ${name} 3` })
 })
 
+const AddAdvertiesing = asyncErrorHandller(async (req, res, next) => {
+  const { name, description, techscoutVerfied, trustedPercentage, ratingStar, onwords, trustedLink, CategoryLink } = JSON.parse(req.body.data)
+  //  console.log(req.file)
+  const file = req.file
+  const fileBuffer = fs.readFileSync(file.path)
+  const bucketName = 's3-softwarelogo-v1'
+  const key = `logo/${file.filename}`;
+  // console.log(file)
+  const params = {
+    Bucket: bucketName,
+    Key: key,
+    Body: fileBuffer,
+    ContentType: file.mimetype,
+  }
+  const command = new PutObjectCommand(params)
+  const objectresponse = await s3.send(command)
+  if (objectresponse.$metadata.httpStatusCode !== 200) throw new CustomError('Something Went Worng', 500)
+  // console.log(objectresponse.$metadata.httpStatusCode,req.body.data)
+  const s3Url = `https://${bucketName}.s3.ap-south-1.amazonaws.com/${key}`
+  const fullPath = path.join(file.destination, file.filename);
+  await fs.promises.unlink(fullPath); // This works with promises
+
+  const response = await Adverties.create({
+    Name: name,
+    Description: description,
+    ImageLink: s3Url,
+    Techscout_Verifyed: techscoutVerfied.value == 1 ? true : false,
+    Trusted_Percentage: trustedPercentage,
+    RatingStars: ratingStar,
+    Onwords: onwords,
+    Website_Link: trustedLink,
+    CategoryLinked: CategoryLink.map((item)=>item.value)
+  })
+  // console.log(response)
+  // console.log(s3Url)
+
+  res.status(200).json({ status: 200, message: 'success' })
+})
+const UpdateAdvertiesing = asyncErrorHandller(async (req, res, next) => {
+  // 1️⃣  Parse body
+  const {
+    id,
+    name,                     // primary key for this update
+    description,
+    techscoutVerfied,
+    trustedPercentage,
+    ratingStar,
+    onwords,
+    trustedLink,
+    CategoryLink,
+  } = JSON.parse(req.body.data);
+if(!id) throw CustomError('Invalid Id',403)
+if(!Array.isArray(CategoryLink)) throw CustomError('Invalid Vategory',403)
+
+  // 2️⃣  Handle optional image upload
+  let s3Url;                                  // keep in outer scope
+  if (req.file) {
+    const fileBuffer = fs.readFileSync(req.file.path);
+
+    const bucketName = 's3-softwarelogo-v1';
+    const key        = `logo/${req.file.filename}`;
+
+    await s3.send(
+      new PutObjectCommand({
+        Bucket: bucketName,
+        Key: key,
+        Body: fileBuffer,
+        ContentType: req.file.mimetype,
+      }),
+    );
+
+    s3Url = `https://${bucketName}.s3.ap-south-1.amazonaws.com/${key}`;
+
+    // delete local temp file
+    await fs.promises.unlink(path.join(req.file.destination, req.file.filename));
+  }
+
+  // 3️⃣  Build the update payload
+  const updatePayload = {
+    Name:name,
+    Description:        description,
+    Techscout_Verifyed: techscoutVerfied?.value === 1,
+    Trusted_Percentage: trustedPercentage,
+    RatingStars:        ratingStar,
+    Onwords:            onwords,
+    Website_Link:       trustedLink,
+    CategoryLinked:     CategoryLink.map((item)=>item.value),
+  };
+
+  if (s3Url) updatePayload.ImageLink = s3Url; // only set when a new file came in
+
+  // 4️⃣  Update by Name
+  const advert = await Adverties.findByIdAndUpdate(id,           // query
+    updatePayload,            // changes
+    { new: true, runValidators: true },
+  );
+
+  if (!advert) throw new CustomError('Advert not found', 404);
+
+  // 5️⃣  Respond
+  res.status(200).json({ status: 200, data: advert, message: 'success' });
+});
+
+
+const AllCategory =  asyncErrorHandller(async (req,res,next) =>{
+  const respone = await SoftwareCategory.find({}).select('_id CategoryName')
+  res.status(200).json({status:200,message:'success',data:respone})
+})
+
+const AllAdvertisvment = asyncErrorHandller(async(req,res,next)=>{
+  const response = await Adverties.find({}).populate('CategoryLinked','CategoryName').lean()
+  res.status(200).json({status:200,message:'success',data:response})
+})
+
+const CategoryAdded  = asyncErrorHandller(async(req,res,next)=>{
+  const response = await Adverties.find({}).populate('CategoryLinked','CategoryName').lean()
+  res.status(200).json({status:200,message:'success'})
+})
+
+const GetAdvertiesByCategory = asyncErrorHandller(async (req, res, next) => {
+  const categoryId = req.params.id;
+
+if(!categoryId) throw new CustomError('Invalid Id',403)
+
+  const advertisings = await Adverties.find({
+    CategoryLinked: categoryId,  // works even if it's an array
+  })
+  .exec();
+
+  res.status(200).json({
+    status: 200,
+    count: advertisings.length,
+    data: advertisings,
+  });
+});
+
+
 module.exports = {
   healthCheck,
   AddCategory, FetchCategory, AddSoftware, FetchSofteares, CountSoftwares, UpdateCategory, upload,
   UpdateSoftware, UpdateCategoryStatus, DeleteSoftware, FetchAllCategory, FetchCategoryDetails, FetchAllSoftware,
-  FetchsoftwareDetails, DemoFunction, SoftwarePostionSet, FetchAllSoftwareNew, UpdateAllSoftwareNew
+  FetchsoftwareDetails, DemoFunction, SoftwarePostionSet, FetchAllSoftwareNew, UpdateAllSoftwareNew, AddAdvertiesing,
+  AllCategory,CategoryAdded,AllAdvertisvment,UpdateAdvertiesing,GetAdvertiesByCategory
 }

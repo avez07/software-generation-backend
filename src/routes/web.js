@@ -52,21 +52,18 @@ router.route('/demo1').get(DynamicController.DemoFunction)
 router.route('/softranked').post(DynamicController.SoftwarePostionSet)
 router.route('/AllSoft').get(DynamicController.FetchAllSoftwareNew)
 
+//addvertising
+
+router.route('/AddAdvertising').post(upload.single('image'),DynamicController.AddAdvertiesing)
+router.route('/UpdateAdvertise').post(upload.single('image'),DynamicController.UpdateAdvertiesing)
+router.route('/GetAdvertiesByCategory/:id').get(DynamicController.GetAdvertiesByCategory)
 
 
 
+router.route('/AllCategory').get(DynamicController.AllCategory)
+router.route('/AllAdvertisment').get(DynamicController.AllAdvertisvment)
 
-
-
-
-
-
-
-
-
-
-
-
+router.use(errorConroller)
 
 router.route('/*').all(async(req,res,next)=>{
     res.status(405).json({status:405,message:'Method Not Allowed'})
@@ -79,5 +76,4 @@ router.route('/*').all(async(req,res,next)=>{
 
 
 
-router.use(errorConroller)
 module.exports = router
