@@ -57,6 +57,8 @@ router.route('/AllSoft').get(DynamicController.FetchAllSoftwareNew)
 router.route('/AddAdvertising').post(upload.single('image'),DynamicController.AddAdvertiesing)
 router.route('/UpdateAdvertise').post(upload.single('image'),DynamicController.UpdateAdvertiesing)
 router.route('/GetAdvertiesByCategory/:id').get(DynamicController.GetAdvertiesByCategory)
+router.route('/toggleAdvertiseActive/:id').patch(DynamicController.ToggleAdvertiesActive)
+
 
 
 

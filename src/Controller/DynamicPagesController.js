@@ -22,7 +22,7 @@ const s3 = new S3Client({
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     // console.log(req)
-    cb(null, 'public/uploads'); // Directory to save uploaded files
+    cb(null, 'public/uploads/'); // Directory to save uploaded files
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + '-' + file.originalname); // Set a unique filename
@@ -199,19 +199,19 @@ const UpdateSoftware = asyncErrorHandller(async (req, res, next) => {
     }
     const command = new DeleteObjectCommand(params)
     const objectresponse = await s3.send(command)
-
+    const filename = file.originalname.replace(/\s+/g, '-')
     const params2 = {
       Bucket: bucketName,
-      Key: key,
+      Key: filename,
       Body: fileBuffer,
       ContentType: file.mimetype,
     }
     const command2 = new PutObjectCommand(params2)
     const objectresponse2 = await s3.send(command2)
-    s3Url = `https://${bucketName}.s3.ap-south-1.amazonaws.com/${key}`
+    s3Url = `https://${bucketName}.s3.ap-south-1.amazonaws.com/${filename}`
     const fullPath = file.destination + file.filename
     await fs.promises.unlink(fullPath)
-
+// console.log(file)
   }
   const encodedUspData = UspData.map(item => ({
     ...item,
@@ -238,6 +238,7 @@ const UpdateSoftware = asyncErrorHandller(async (req, res, next) => {
 
     }
   }
+  // console.log(s3Url)
   const Data = await softewareAdding.findByIdAndUpdate(id, update)
   res.status(200).json({ status: 200, message: 'success', documentId: Data?._id, })
 })
@@ -435,7 +436,7 @@ if(!Array.isArray(CategoryLink)) throw CustomError('Invalid Vategory',403)
   const updatePayload = {
     Name:name,
     Description:        description,
-    Techscout_Verifyed: techscoutVerfied?.value === 1,
+    Techscout_Verifyed: techscoutVerfied?.value == 1 ? true : false,
     Trusted_Percentage: trustedPercentage,
     RatingStars:        ratingStar,
     Onwords:            onwords,
@@ -490,11 +491,31 @@ if(!categoryId) throw new CustomError('Invalid Id',403)
   });
 });
 
+const ToggleAdvertiesActive = asyncErrorHandller(async (req, res, next) => {
+  const advertId = req.params.id;
+
+  
+
+  const advert = await Adverties.findById(advertId);
+  
+
+  advert.Active = !advert.Active;
+  await advert.save();
+
+  res.status(200).json({
+    status: 200,
+    message: `Advertisement is now ${advert.Active ? 'active' : 'inactive'}`,
+    data: advert,
+  });
+});
+
+
 
 module.exports = {
   healthCheck,
   AddCategory, FetchCategory, AddSoftware, FetchSofteares, CountSoftwares, UpdateCategory, upload,
   UpdateSoftware, UpdateCategoryStatus, DeleteSoftware, FetchAllCategory, FetchCategoryDetails, FetchAllSoftware,
   FetchsoftwareDetails, DemoFunction, SoftwarePostionSet, FetchAllSoftwareNew, UpdateAllSoftwareNew, AddAdvertiesing,
-  AllCategory,CategoryAdded,AllAdvertisvment,UpdateAdvertiesing,GetAdvertiesByCategory
+  AllCategory,CategoryAdded,AllAdvertisvment,UpdateAdvertiesing,GetAdvertiesByCategory,
+  ToggleAdvertiesActive
 }
