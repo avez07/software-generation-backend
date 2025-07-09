@@ -97,7 +97,7 @@ const UpdateCategoryStatus = asyncErrorHandller(async (req, res, next) => {
 
 const AddSoftware = asyncErrorHandller(async (req, res, nex) => {
   const { CategoryId, SoftwareName, WebsiteLink, PricingData, SubTittle, discription, graphScore, SoftWareQA, KeyFeatures, specData, UspData, Metatittle, MetaDiscription, MetaKeyWord } = JSON.parse(req.body.data)
-  return res.status(200).json({ status: 200, message: 'success' })
+  // return res.status(200).json({ status: 200, message: 'success' })
 
   const file = req.file
   const fileBuffer = fs.readFileSync(file.path)
